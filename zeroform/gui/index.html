@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="windows">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ZEROFORM — Security Reality Compiler</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- ============ Navigation rail ============ -->
+  <nav class="nav-rail">
+    <div class="brand">
+      <div class="brand-mark">ZF</div>
+      <div class="brand-text">
+        <span class="brand-name" data-i18n="appName">ZEROFORM</span>
+        <span class="brand-tagline" data-i18n="appTagline">Security Reality Compiler</span>
+      </div>
+    </div>
+
+    <button class="nav-item active" data-page="overview"><span class="nav-icon">&#9776;</span><span data-i18n="navOverview">Overview</span></button>
+    <button class="nav-item" data-page="graph"><span class="nav-icon">&#9881;</span><span data-i18n="navGraph">Reality &amp; Findings</span></button>
+    <button class="nav-item" data-page="policies"><span class="nav-icon">&#128274;</span><span data-i18n="navPolicies">Policies</span></button>
+    <button class="nav-item" data-page="scenarios"><span class="nav-icon">&#9889;</span><span data-i18n="navScenarios">Scenario Lab</span></button>
+    <button class="nav-item" data-page="refactor"><span class="nav-icon">&#128295;</span><span data-i18n="navRefactor">Refactor Advisor</span></button>
+    <button class="nav-item" data-page="report"><span class="nav-icon">&#128196;</span><span data-i18n="navReport">Release Passport</span></button>
+    <button class="nav-item" data-page="hours"><span class="nav-icon">&#128337;</span><span data-i18n="navHours">Operating Hours</span></button>
+    <button class="nav-item" data-page="settings"><span class="nav-icon">&#9881;&#65039;</span><span data-i18n="navSettings">Settings</span></button>
+
+    <div class="nav-spacer"></div>
+    <div class="conn-pill">
+      <span id="connDot" class="conn-dot"></span>
+      <span id="connLabel">…</span>
+    </div>
+  </nav>
+
+  <!-- ============ Main content ============ -->
+  <main class="main">
+
+    <!-- ---------- Overview ---------- -->
+    <section id="page-overview" class="page">
+      <div class="topbar">
+        <div>
+          <h1 class="page-title" data-i18n="overviewTitle">Reality Model</h1>
+          <p class="page-subtitle" data-i18n="overviewSubtitle">Paste ZEROFORM Reality DSL source, or load the bundled sample, then compile.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <textarea id="dslInput" spellcheck="false"></textarea>
+        <div class="btn-row">
+          <button id="loadSampleBtn" class="btn btn-secondary" data-i18n="loadSample">Load sample world</button>
+          <button id="compileBtn" class="btn btn-primary" data-i18n="compileBtn">Compile</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="compileOutput"></div>
+      </div>
+    </section>
+
+    <!-- ---------- Reality & Findings ---------- -->
+    <section id="page-graph" class="page hidden">
+      <div class="topbar">
+        <div>
+          <h1 class="page-title" data-i18n="graphTitle">Findings</h1>
+          <p class="page-subtitle" data-i18n="graphSubtitle">Security Gap Analyzer output for the last compiled model.</p>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr>
+            <th data-i18n="colSeverity">Severity</th>
+            <th data-i18n="colKind">Kind</th>
+            <th data-i18n="colDescription">Description</th>
+          </tr></thead>
+          <tbody id="findingsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---------- Policies ---------- -->
+    <section id="page-policies" class="page hidden">
+      <div class="topbar">
+        <div>
+          <h1 class="page-title" data-i18n="policiesTitle">Policy Artifacts</h1>
+          <p class="page-subtitle" data-i18n="policiesSubtitle">Signed, versioned policy documents produced by the Policy Generator.</p>
+        </div>
+      </div>
+      <div class="card">
+        <table>
+          <thead><tr>
+            <th data-i18n="colPolicyId">Policy ID</th>
+            <th data-i18n="colTarget">Target</th>
+            <th data-i18n="colVersion">Version</th>
+            <th data-i18n="colSigned">Signature</th>
+          </tr></thead>
+          <tbody id="policiesBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ---------- Scenario Lab ---------- -->
+    <section id="page-scenarios" class="page hidden">
+      <div class="topbar">
+        <div>
+          <h1 class="page-title" data-i18n="scenarioTitle">Scenario Lab</h1>
+          <p class="page-subtitle" data-i18n="scenarioSubtitle">Run a scenario against the Virtual Security Environment.</p>
+        </div>
+      </div>
+      <div class="card">
+        <label for="scenarioName" data-i18n="scenarioName">Scenario name</label>
+        <input type="text" id="scenarioName" value="policy_removal_demo" style="width:100%; margin-bottom:12px;" />
+        <label for="scenarioEvents" data-i18n="scenarioEvents">Events (JSON array)</label>
+        <textarea id="scenarioEvents" style="min-height:120px;">[
+  {"type": "remove_control", "target": "api:payments-gateway->db:payments",
+   "params": {"control_type": "authentication"}, "at_step": 1}
+]</textarea>
+        <div class="btn-row">
+          <button id="scenarioRunBtn" class="btn btn-primary" data-i18n="scenarioRun">Run scenario</button>
+        </div>
+      </div>
+      <div class="card"><div id="scenarioOutput"></div></div>
+    </section>
+
+    <!-- ---------- Refactor Advisor ---------- -->
+    <section id="page-refactor" class="page hidden">
+      <div class="topbar">
+        <div>
+          <h1 class="page-title" data-i18n="refactorTitle">Refactor Advisor</h1>
+          <p class="page-subtitle" data-i18n="refactorSubtitle">Graph transformations proposed for the current findings.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="btn-row" style="margin-top:0;">
+          <button id="refactorRunBtn" class="btn btn-primary" data-i18n="scenarioRun">Run scenario</button>
+        </div>
+      </div>
+      <div id="refactorOutput"></div>
+    </section>
+
+    <!-- ---------- Release Passport ---------- -->
+    <section id="page-report" class="page hidden">
+      <div class="topbar">
+        <div>
+          <h1 class="page-title" data-i18n="reportTitle">Release Passport</h1>
+          <p class="page-subtitle" data-i18n="reportSubtitle">A per-version summary: controls, tests, open findings, residual risk.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="btn-row" style="margin-top:0;">
+          <button id="reportBuildBtn" class="btn btn-primary" data-i18n="reportBuild">Build passport</button>
+        </div>
+      </div>
+      <div class="card"><div id="reportOutput"></div></div>
+    </section>
+
+    <!-- ---------- Operating Hours ---------- -->
+    <section id="page-hours" class="page hidden">
+      <div class="topbar">
+        <div>
+          <h1 class="page-title" data-i18n="hoursTitle">Operating Hours</h1>
+          <p class="page-subtitle" data-i18n="hoursSubtitle">Enter the SOC / support desk's weekly hours. ZEROFORM works out whether it's open right now and how long until the next change.</p>
+        </div>
+      </div>
+
+      <div id="hoursStatusBanner" class="status-banner closed">
+        <span class="status-dot"></span><span>…</span>
+      </div>
+
+      <div class="card">
+        <label for="hoursTimezone" data-i18n="hoursTimezone">Timezone label</label>
+        <input type="text" id="hoursTimezone" value="UTC" style="width:220px; margin-bottom:14px;" />
+        <div id="hoursGrid" class="hours-grid"></div>
+        <div class="btn-row">
+          <button id="hoursSaveBtn" class="btn btn-primary" data-i18n="hoursSave">Save schedule</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" data-i18n="hoursHolidayLabel">Add a date exception (holiday / closure)</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:end; margin-top:8px;">
+          <div>
+            <label for="hoursExcDate" data-i18n="hoursHolidayDate">Date (YYYY-MM-DD)</label>
+            <input type="date" id="hoursExcDate" />
+          </div>
+          <div style="flex:1; min-width:160px;">
+            <label for="hoursExcLabel" data-i18n="hoursHolidayName">Label</label>
+            <input type="text" id="hoursExcLabel" style="width:100%;" />
+          </div>
+          <button id="hoursExcAddBtn" class="btn btn-secondary" data-i18n="hoursHolidayAdd">Add exception</button>
+        </div>
+        <div class="card-title" style="margin-top:18px;" data-i18n="hoursExceptions">Date exceptions</div>
+        <div id="hoursExceptionsList" style="margin-top:8px;"></div>
+      </div>
+    </section>
+
+    <!-- ---------- Settings ---------- -->
+    <section id="page-settings" class="page hidden">
+      <div class="topbar">
+        <div>
+          <h1 class="page-title" data-i18n="settingsTitle">Settings</h1>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="settings-row">
+          <div>
+            <div class="card-title" data-i18n="settingsTheme" style="margin:0;">Theme</div>
+          </div>
+          <div class="theme-swatches">
+            <div class="theme-swatch sw-windows" data-theme="windows" title="Windows"></div>
+            <div class="theme-swatch sw-light" data-theme="light" title="Light"></div>
+            <div class="theme-swatch sw-dark" data-theme="dark" title="Dark"></div>
+            <div class="theme-swatch sw-red" data-theme="red" title="Red"></div>
+            <div class="theme-swatch sw-blue" data-theme="blue" title="Blue"></div>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <div class="card-title" data-i18n="settingsLanguage" style="margin:0;">Language</div>
+          </div>
+          <div class="lang-btns">
+            <button class="lang-btn" data-lang="en">English</button>
+            <button class="lang-btn" data-lang="fa">فارسی</button>
+            <button class="lang-btn" data-lang="zh">中文</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <div style="flex:1;">
+            <label for="apiBaseInput" data-i18n="connApiLabel">API base URL</label>
+            <input type="text" id="apiBaseInput" style="width:100%;" value="http://127.0.0.1:8000" />
+          </div>
+          <button id="connCheckBtn" class="btn btn-secondary" data-i18n="connCheck">Check connection</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="app-footer" data-i18n="footerLocalOnly">
+  Local-Only Mode: nothing leaves this browser except requests to the API base URL you configured.
+</footer>
+
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

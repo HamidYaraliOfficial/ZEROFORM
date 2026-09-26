@@ -1,0 +1,41 @@
+replicaCount: 2
+
+image:
+  repository: zeroform/zeroform
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 70
+
+probes:
+  liveness:
+    path: /api/health
+    initialDelaySeconds: 5
+    periodSeconds: 15
+  readiness:
+    path: /api/health
+    initialDelaySeconds: 3
+    periodSeconds: 10
+
+# Reference an existing Secret holding ZEROFORM_SIGNING_KEY rather
+# than putting the key in values.yaml / version control.
+signingKeySecretName: zeroform-signing-key
+
+terminationGracePeriodSeconds: 20

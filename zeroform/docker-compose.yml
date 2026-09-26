@@ -1,0 +1,56 @@
+version: "3.9"
+
+# Local development stack. The compiler itself needs nothing but the
+# `api` service (Local-Only Mode uses the in-memory NetworkX graph
+# backend and a local signing key) — redis/neo4j are provided here as
+# opt-in services for people wiring up the Neo4jGraphRepository
+# adapter or a shared runtime-state cache; neither is required to run
+# `zeroform compile` or the bundled GUI.
+
+services:
+  api:
+    build: .
+    container_name: zeroform-api
+    ports:
+      - "8000:8000"
+    environment:
+      - ZEROFORM_SIGNING_KEY=${ZEROFORM_SIGNING_KEY:-dev-only-change-me}
+      - ZEROFORM_AUDIT_LOG=/app/.zeroform/audit.jsonl
+    volumes:
+      - zeroform-state:/app/.zeroform
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  gui:
+    image: nginx:alpine
+    container_name: zeroform-gui
+    ports:
+      - "8080:80"
+    volumes:
+      - ./gui:/usr/share/nginx/html:ro
+    depends_on:
+      - api
+
+  # optional: uncomment to run a real Neo4j-backed GraphRepository
+  # neo4j:
+  #   image: neo4j:5
+  #   environment:
+  #     - NEO4J_AUTH=neo4j/change-me-please
+  #   ports:
+  #     - "7474:7474"
+  #     - "7687:7687"
+  #   volumes:
+  #     - neo4j-data:/data
+
+  # optional: uncomment for runtime-state caching / pub-sub
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+
+volumes:
+  zeroform-state:
+  # neo4j-data:

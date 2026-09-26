@@ -1,0 +1,97 @@
+# ZEROFORM Reality DSL — sample world
+# A small payments system used throughout the README, tests and the
+# `zeroform init --sample` scaffold.
+
+world "Acme Payments Reality" {
+  version: "0.1.0"
+  description: "Minimal payments flow used to demonstrate the ZEROFORM pipeline"
+}
+
+trust_zone "Internet" { level: 0 }
+trust_zone "Internal" { level: 5, parent: "Internet" }
+trust_zone "Secure" { level: 8, parent: "Internal" }
+trust_zone "Secrets" { level: 10, parent: "Secure" }
+
+identity "user:alice" {
+  type: "User"
+  roles: ["Operator"]
+  trust_zone: "Internet"
+  criticality: "high"
+}
+
+agent "agent:refund-bot" {
+  type: "Agent"
+  roles: ["ServiceAccount"]
+  trust_zone: "Internal"
+  capabilities: ["read_transactions", "issue_refund"]
+}
+
+api "api:payments-gateway" {
+  type: "API"
+  owner: "team-payments"
+  trust_zone: "Internal"
+  criticality: "high"
+}
+
+database "db:payments" {
+  type: "Database"
+  trust_zone: "Secure"
+  classification: "Restricted"
+  owner: "team-payments"
+}
+
+secret "secret:payments-db-password" {
+  type: "Secret"
+  trust_zone: "Secrets"
+  owner: "team-payments"
+}
+
+external_system "partner:card-network" {
+  type: "ExternalSystem"
+  trust_zone: "Internet"
+}
+
+flow "alice-calls-gateway" {
+  from: "user:alice"
+  to: "api:payments-gateway"
+  action: "calls"
+  data: "PaymentRequest"
+  classification: "Confidential"
+}
+
+flow "gateway-reads-db" {
+  from: "api:payments-gateway"
+  to: "db:payments"
+  action: "reads"
+  data: "PaymentRecord"
+  classification: "Restricted"
+}
+
+flow "gateway-uses-secret" {
+  from: "api:payments-gateway"
+  to: "secret:payments-db-password"
+  action: "uses"
+  data: "DatabaseCredential"
+  classification: "Secret"
+}
+
+flow "gateway-calls-partner" {
+  from: "api:payments-gateway"
+  to: "partner:card-network"
+  action: "calls"
+  data: "CardAuthorizationRequest"
+  classification: "Confidential"
+}
+
+flow "refundbot-reads-db" {
+  from: "agent:refund-bot"
+  to: "db:payments"
+  action: "reads"
+  data: "PaymentRecord"
+  classification: "Restricted"
+}
+
+policy "require-controls-on-boundaries" {
+  applies_to: "flow"
+  description: "Baseline expectation compiled automatically by the Trust Boundary Compiler."
+}

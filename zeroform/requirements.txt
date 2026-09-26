@@ -1,0 +1,18 @@
+# Core (required for the compiler pipeline + CLI)
+networkx>=3.2
+click>=8.1
+
+# API service (required for `zeroform run`)
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+websockets>=12.0
+
+# Testing
+pytest>=8.0
+
+# Optional extension points (not required for Local-Only Mode):
+#   neo4j          - live Neo4j-backed GraphRepository adapter
+#   wasmtime        - execute a real compiled .wasm policy guest module
+#   z3-solver       - FormalVerificationAdapter concrete implementation
+#   PyYAML          - if you want to import YAML Reality documents directly
